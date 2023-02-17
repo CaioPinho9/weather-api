@@ -6,7 +6,7 @@ def insert(table, record):
         host="${{ secrets.SQL_HOST }}",
         user="${{ secrets.SQL_USER }}",
         password="${{ secrets.SQL_PASSWORD }}",
-        database="db-weather"
+        database="${{ secrets.SQL_NAME }}"
       )
       
       cursor = connection.cursor()

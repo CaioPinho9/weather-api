@@ -113,8 +113,12 @@ def get_forecast_per_city():
 def get_forecast_per_capital():
   global CAPITALS
   get_forecast(CAPITALS)
-  
-get_forecast_per_capital()
-get_current_weather_per_capital()
-get_forecast_per_city()
-get_current_weather_per_city()
+
+def getData():
+  try:
+    get_forecast_per_capital()
+    get_current_weather_per_capital()
+    get_forecast_per_city()
+    get_current_weather_per_city()
+  except Exception:
+    pass
