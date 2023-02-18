@@ -1,13 +1,17 @@
 import requests
+import os
 
+from dotenv import load_dotenv
 from datetime import datetime
 from pytz import timezone
 from dao_weather import DaoWeather
 from db_weather import insert
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # link do open_weather: https://openweathermap.org/
 
-API_KEY = "${{ secrets.API_KEY }}"
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 COUNTRY_CODE = "BR"
 CAPITALS = dict({"Brasília": "Distrito Federal", "Campo Grande": "Mato Grosso do Sul",
                    "Cuiabá": "Mato Grosso", "Goiânia": "Goiás"})
@@ -71,30 +75,27 @@ def get_cities_Centro_Oeste():
   return cities
   
 def get_current_weather(cities):
-  response = []
   for city in cities:
     city_name = city
     state_name = cities[city]
     try:
-      city_weather = get_current_weather_city(city_name, state_name)
-      if city_weather is not None:
-        response.append(city_weather)
+      city_weather = [get_current_weather_city(city_name, state_name)]
+      if city_weather != [None]:
+        insert("current_weather", city_weather)
+        
     except Exception:
       pass
-  insert("current_weather", response)
 
 def get_forecast(cities):
-  response = []
   for city in cities:
     city_name = city
     state_name = cities[city]
     try:
       city_weather = get_forecast_city(city_name, state_name)
       if city_weather is not None:
-        response = [*response, *get_forecast_city(city_name, state_name)]
+          insert("forecast", city_weather)
     except Exception:
       pass
-  insert("forecast", response)
   
 def get_current_weather_per_city():
   cities = get_cities_Centro_Oeste()
@@ -116,9 +117,14 @@ def get_forecast_per_capital():
 
 def getData():
   try:
-    get_forecast_per_capital()
-    get_current_weather_per_capital()
+    #get_forecast_per_capital()
+    #get_current_weather_per_capital()
     get_forecast_per_city()
     get_current_weather_per_city()
   except Exception:
     pass
+
+getData()
+scheduler = BlockingScheduler()
+scheduler.add_job(getData, 'interval', hours=3)
+scheduler.start()
