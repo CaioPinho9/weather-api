@@ -1,12 +1,13 @@
 import mysql.connector
+import os
   
 def insert(table, record):
   try:
       connection = mysql.connector.connect(
-        host="${{ secrets.SQL_HOST }}",
-        user="${{ secrets.SQL_USER }}",
-        password="${{ secrets.SQL_PASSWORD }}",
-        database="${{ secrets.SQL_NAME }}"
+        host= os.getenv("SQL_HOST"),
+        user= os.getenv("SQL_USER"),
+        password= os.getenv("SQL_PASSWORD"),
+        database= os.getenv("SQL_NAME")
       )
       
       cursor = connection.cursor()

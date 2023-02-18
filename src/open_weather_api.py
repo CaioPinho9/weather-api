@@ -1,4 +1,5 @@
 import requests
+import os
 
 from datetime import datetime
 from pytz import timezone
@@ -7,7 +8,7 @@ from db_weather import insert
 
 # link do open_weather: https://openweathermap.org/
 
-API_KEY = "${{ secrets.API_KEY }}"
+API_KEY = os.getenv("API_KEY")
 COUNTRY_CODE = "BR"
 CAPITALS = dict({"Brasília": "Distrito Federal", "Campo Grande": "Mato Grosso do Sul",
                    "Cuiabá": "Mato Grosso", "Goiânia": "Goiás"})
